@@ -8,42 +8,40 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// qGiMK8dbEDmBzgM1
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xvulc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function run(){
-    try{
+async function run() {
+    try {
         await client.connect();
         console.log('connected');
         const database = client.db("flynext");
         const allServiceCollection = database.collection("allService");
         const allBookingCollection = database.collection("allBooking");
-//service
-        app.get('/services', async(req, res)=>{
+        //service
+        app.get('/services', async (req, res) => {
             const cursor = allServiceCollection.find({});
             const service = await cursor.toArray();
             res.send(service);
         })
 
-        app.post('/services', async(req, res)=>{
+        app.post('/services', async (req, res) => {
             const service = req.body;
             const result = await allServiceCollection.insertOne(service);
             res.send(result);
         })
-// single api 
-        app.get('/services/:id', async(req, res)=>{
+        // single api 
+        app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             console.log('getin single', id)
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const package = await allServiceCollection.findOne(query);
             res.json(package);
         })
-        
-        // Booking get 
-        app.get('/bookings', async(req, res) =>{
+
+        // Booking get data
+        app.get('/bookings', async (req, res) => {
             const cursor = allBookingCollection.find({});
             const booking = await cursor.toArray();
             res.send(booking);
@@ -55,20 +53,20 @@ async function run(){
             res.json(result);
         })
 
-        app.delete('/bookings/:id', async(req, res)=>{
+        app.delete('/bookings/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await allBookingCollection.deleteOne(query);
             res.json(result);
         })
 
-        app.put('/bookings/:id', async(req, res)=>{
+        app.put('/bookings/:id', async (req, res) => {
             const id = req.params.id;
             const updateBookingStatus = req.body;
-            const filter = {_id: ObjectId(id)};
-            const options = {upsert: true};
-            const updateDoc ={
-                $set:{
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
                     status: updateBookingStatus.status
                 }
             };
@@ -76,7 +74,7 @@ async function run(){
             res.json(result)
         })
     }
-    finally{
+    finally {
 
     }
 }
@@ -84,8 +82,8 @@ run().catch(console.dir)
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
-  })
-  
-  app.listen(port, () => {
+})
+
+app.listen(port, () => {
     console.log('listening on port', port)
-  })
+})
