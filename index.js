@@ -33,7 +33,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
         console.log('connected');
         const database = client.db("flynext");
         const allServiceCollection = database.collection("allService");
